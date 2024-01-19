@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animación de Ondas de Agua</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="waterCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('waterCanvas');
+        const ctx = canvas.getContext('2d');
+        let ripples = [];
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function createRipple(x, y) {
+            ripples.push({
+                x,
+                y,
+                radius: 1,
+                opacity: 1
+            });
+        }
+
+        function animateRipples() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < ripples.length; i++) {
+                ctx.beginPath();
+                ctx.arc(ripples[i].x, ripples[i].y, ripples[i].radius, 0, 2 * Math.PI);
+                ctx.fillStyle = `rgba(0, 123, 255, ${ripples[i].opacity})`;
+                ctx.fill();
+
+                ripples[i].radius += 2;
+                ripples[i].opacity -= 0.02;
+
+                if (ripples[i].opacity <= 0) {
+                    ripples.splice(i, 1);
+                    i--;
+                }
+            }
+
+            requestAnimationFrame(animateRipples);
+        }
+
+        function handleMouseClick(event) {
+            const x = event.clientX;
+            const y = event.clientY;
+            createRipple(x, y);
+        }
+
+        function handleMouseMove(event) {
+            const x = event.clientX;
+            const y = event.clientY;
+            createRipple(x, y);
+        }
+
+        document.addEventListener('click', handleMouseClick);
+        document.addEventListener('mousemove', handleMouseMove);
+
+        animateRipples();
+    </script>
+</body>
+</html>
